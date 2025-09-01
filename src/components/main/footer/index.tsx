@@ -95,7 +95,6 @@ const Footer = () => {
                     aria-label="Facebook" 
                     sx={{ 
                       color: 'white', 
-                      
                       transition: 'all 0.3s ease',
                       '&:hover': { 
                         color: '#4267B2',
@@ -163,7 +162,7 @@ const Footer = () => {
             md={4}
             sx={{ 
               display: 'flex',
-              justifyContent: { xs: 'center', sm: 'flex-start' },
+              justifyContent: { xs:  'flex-start' },
               mb: { xs: 4, md: 0 },
             }}
           >
