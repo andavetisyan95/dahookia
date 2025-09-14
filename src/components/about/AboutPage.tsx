@@ -1,6 +1,9 @@
 'use client';
 
-import { Box, Typography, Breadcrumbs, Link, Divider, Button, Container } from '@mui/material';
+import { useState } from 'react';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { Box, Typography, Breadcrumbs, Divider, Button, Container } from '@mui/material';
 import dynamicImport from 'next/dynamic';
 import HomeIcon from '@mui/icons-material/Home';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
@@ -26,43 +29,89 @@ const VideoGallery = dynamicImport<{ videos: VideoItem[] }>(
 export const dynamic = 'force-dynamic';
 
 function BreadcrumbNav() {
+  const [isNavigating, setIsNavigating] = useState(false);
+  const pathname = usePathname();
+
+  const handleNavigation = () => {
+    if (pathname !== '/') {
+      setIsNavigating(true);
+    }
+  };
+
   return (
-    <Breadcrumbs 
-      aria-label="breadcrumb" 
-      separator={<NavigateNextIcon fontSize="small" />}
-      sx={{ 
-        mb: 4,
-        '& .MuiBreadcrumbs-ol': {
-          justifyContent: 'flex-start',
-        }
-      }}
-    >
-      <Link 
-        underline="hover" 
-        color="inherit" 
-        href="/"
-        sx={{
-          display: 'flex',
-          alignItems: 'center',
-          '&:hover': {
-            color: 'primary.main',
+    <>
+      <Breadcrumbs 
+        aria-label="breadcrumb" 
+        separator={<NavigateNextIcon fontSize="small" />}
+        sx={{ 
+          mb: 4,
+          '& .MuiBreadcrumbs-ol': {
+            justifyContent: 'flex-start',
           }
         }}
       >
-        <HomeIcon sx={{ mr: 0.5 }} fontSize="small" />
-        Home
-      </Link>
-      <Typography color="primary" fontWeight={500}>
-        About
-      </Typography>
-    </Breadcrumbs>
+        <Link 
+          href="/"
+          passHref
+          onClick={handleNavigation}
+          style={{ textDecoration: 'none' }}
+        >
+          <Box 
+            component="span"
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              color: '#757574', // Darker silver for better visibility
+              textDecoration: 'none',
+              '&:hover': {
+                color: 'primary.main',
+                textDecoration: 'none',
+              }
+            }}
+          >
+            <HomeIcon sx={{ mr: 0.5 }} fontSize="small" />
+            Home
+          </Box>
+        </Link>
+        <Typography color="primary" fontWeight={500}>
+          About
+        </Typography>
+      </Breadcrumbs>
+      {isNavigating && (
+        <Box sx={{ 
+          position: 'fixed', 
+          top: 0, 
+          left: 0, 
+          right: 0, 
+          bottom: 0, 
+          backgroundColor: 'rgba(255, 255, 255, 0.8)', 
+          zIndex: 9999,
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center'
+        }}>
+          <Box sx={{ 
+            width: 60, 
+            height: 60, 
+            border: '4px solid #f3f3f3',
+            borderTop: '4px solid #3f51b5',
+            borderRadius: '50%',
+            animation: 'spin 1s linear infinite',
+            '@keyframes spin': {
+              '0%': { transform: 'rotate(0deg)' },
+              '100%': { transform: 'rotate(360deg)' }
+            }
+          }} />
+        </Box>
+      )}
+    </>
   );
 }
 
 export default function AboutPage() {
   return (
     <Box sx={{ 
-      pt: { xs: 12, md: 16 },
+      pt: { xs: 14, md: 16 },
       pb: { xs: 6, md: 12 },
       minHeight: '100vh',
       position: 'relative',
@@ -87,14 +136,13 @@ export default function AboutPage() {
           mb: { xs: 6, md: 8 },
           textAlign: 'center',
           maxWidth: '1000px',
-          mx: 'auto'
+          mx: 'auto',
         }}>
           <Typography 
             variant="h1" 
             sx={{
               fontSize: { xs: '2.2rem', md: '3.5rem' },
               fontWeight: 800,
-              mb: 4,
               color: '#2c3e50',
               lineHeight: 1.2,
               letterSpacing: '-0.5px',
@@ -107,6 +155,7 @@ export default function AboutPage() {
           <Box sx={{ 
             display: 'flex', 
             flexDirection: { xs: 'column', md: 'row' },
+            mt: { xs: 10, md: 8 },
             alignItems: 'center',
             gap: 4,
             textAlign: 'left'
@@ -156,7 +205,27 @@ export default function AboutPage() {
           </Box>
         </Box>
         
-        {/* <VideoGallery videos={videoItems} /> */}
+        <Box sx={{ 
+          width: '100%',
+          bgcolor: 'background.default',
+          position: 'relative',
+          '&::before': {
+            content: '""',
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: 'linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)',
+            zIndex: 0,
+          }
+        }}>
+          <Box sx={{ position: 'relative', zIndex: 1, py: { xs: 6, md: 8 } }}>
+            <Container maxWidth="lg">
+              <VideoGallery videos={videoItems} />
+            </Container>
+          </Box>
+        </Box>
 
         <Box 
           sx={{ 
@@ -217,7 +286,7 @@ export default function AboutPage() {
               }
             }}
           >
-            Book Your Stay
+            Book Your Lesson
           </Button>
         </Box>
       </Container>

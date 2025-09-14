@@ -16,12 +16,11 @@ const VideoThumbnail = styled(Box)(({ theme }) => ({
   borderRadius: theme.shape.borderRadius,
   overflow: 'hidden',
   cursor: 'pointer',
-  transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+  transition: 'box-shadow 0.3s ease',
   '&:hover': {
-    transform: 'translateY(-4px)',
     boxShadow: theme.shadows[6],
     '& .play-button': {
-      transform: 'scale(1.1)',
+      transform: 'translate(-50%, -50%) scale(1.1)',
       opacity: 0.9,
     }
   }
@@ -40,6 +39,7 @@ const PlayButton = styled(Box)(({ theme }) => ({
   alignItems: 'center',
   justifyContent: 'center',
   transition: 'all 0.3s ease',
+  willChange: 'transform',
   '&:hover': {
     backgroundColor: 'rgba(255,255,255,0.95)',
   }
@@ -92,40 +92,77 @@ export default function VideoGallery({ videos }: VideoGalleryProps) {
 
   return (
     <>
-      <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(3, 1fr)' }, gap: 3, mb: 6 }}>
-        {videos.map((item) => (
-          <Box key={item.id}>
-            <VideoThumbnail 
-              onClick={() => openVideoModal(item.videoUrl)}
-              role="button"
-              tabIndex={0}
-              onKeyDown={(e) => e.key === 'Enter' && openVideoModal(item.videoUrl)}
-            >
-              <Box sx={{ 
-                position: 'relative',
-                paddingBottom: '56.25%', // 16:9 aspect ratio
-                backgroundColor: 'rgba(0,0,0,0.1)'
-              }}>
-                <Image
-                  src={item.thumbnail}
-                  alt={item.title}
-                  fill
-                  style={{ objectFit: 'cover' }}
-                  sizes="(max-width: 600px) 100vw, (max-width: 960px) 50vw, 33vw"
-                  priority={false}
-                />
-                <PlayButton className="play-button" aria-label={`Play ${item.title}`}>
-                  <PlayArrow sx={{ color: 'black', fontSize: 40 }} />
-                </PlayButton>
-              </Box>
-              <Box sx={{ p: 2, bgcolor: 'background.paper' }}>
-                <Typography variant="subtitle1" component="h3" sx={{ fontWeight: 500 }}>
-                  {item.title}
-                </Typography>
-              </Box>
-            </VideoThumbnail>
-          </Box>
-        ))}
+      <Box sx={{ 
+        width: '100%',
+        overflowX: 'auto',
+        overflowY: 'hidden',
+        '&::-webkit-scrollbar': {
+          display: 'none', // Hide scrollbar for Chrome, Safari, and Opera
+        },
+        msOverflowStyle: 'none',  // Hide scrollbar for IE and Edge
+        scrollbarWidth: 'none',   // Hide scrollbar for Firefox
+        py: 1,
+        mb: 4,
+        '@media (min-width: 600px)': {
+          overflow: 'visible',
+          mb: 6
+        }
+      }}>
+        <Box sx={{ 
+          display: 'inline-flex',
+          gap: 2,
+          px: 2,
+          '@media (min-width: 600px)': {
+            display: 'grid',
+            gridTemplateColumns: 'repeat(2, 1fr)',
+            width: '100%',
+            gap: 3,
+            px: 0,
+          },
+          '@media (min-width: 900px)': {
+            gridTemplateColumns: 'repeat(3, 1fr)',
+          }
+        }}>
+          {videos.map((item) => (
+            <Box key={item.id} sx={{
+              width: '240px',
+              flexShrink: 0,
+              '@media (min-width: 600px)': {
+                width: '100%',
+              }
+            }}>
+              <VideoThumbnail 
+                onClick={() => openVideoModal(item.videoUrl)}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => e.key === 'Enter' && openVideoModal(item.videoUrl)}
+              >
+                <Box sx={{ 
+                  position: 'relative',
+                  paddingBottom: '56.25%', // 16:9 aspect ratio
+                  backgroundColor: 'rgba(0,0,0,0.1)'
+                }}>
+                  <Image
+                    src={item.thumbnail}
+                    alt={item.title}
+                    fill
+                    style={{ objectFit: 'cover' }}
+                    sizes="(max-width: 600px) 100vw, (max-width: 960px) 50vw, 33vw"
+                    priority={false}
+                  />
+                  <PlayButton className="play-button" aria-label={`Play ${item.title}`}>
+                    <PlayArrow sx={{ color: 'black', fontSize: 40 }} />
+                  </PlayButton>
+                </Box>
+                <Box sx={{ p: 2, bgcolor: 'background.paper' }}>
+                  <Typography variant="subtitle1" component="h3" sx={{ fontWeight: 500 }}>
+                    {item.title}
+                  </Typography>
+                </Box>
+              </VideoThumbnail>
+            </Box>
+          ))}
+        </Box>
       </Box>
 
       <Modal
