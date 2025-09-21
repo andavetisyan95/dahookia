@@ -170,19 +170,18 @@ export default function AboutPage() {
               flexDirection: 'column',
               justifyContent: 'center',
               '& p': {
-                marginBottom: '0.8rem',
-                lineHeight: 1.8,
+                marginBottom: '0.5rem',
+                lineHeight: 1.6,
                 fontSize: '1.1rem',
-                color: '#333'
-              },
-              '& p:last-child': {
-                marginBottom: 0
+                color: '#333',
+                textAlign: 'justify',
+                '&:not(:last-child)': {
+                  marginBottom: '1rem'
+                }
               }
             }}>
               <p><strong>Welcome to our professional ski and snowboard school</strong> in the heart of Tsaghkadzor, Armenia&apos;s premier winter sports destination. Our certified instructors are passionate about sharing their love for winter sports with students of all levels.</p>
-              
               <p>Located at an elevation of 1,966 meters, <strong>Tsaghkadzor</strong> offers excellent snow conditions from December through March, with modern lifts and well-groomed slopes perfect for learning and improving your skills.</p>
-              
               <p>It&apos;s our mission to help you achieve your goals and reach new heights in your career. Whether you&apos;re just starting out or looking to take the next step, we&apos;re here to support you every step of the way.chniques, our instructors will help you progress in a fun, safe environment.</p>
             </Box>
             

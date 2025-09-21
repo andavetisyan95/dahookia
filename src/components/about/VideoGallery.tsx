@@ -5,7 +5,6 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Modal, { ModalProps } from '@mui/material/Modal';
 import IconButton from '@mui/material/IconButton';
-import Grid from '@mui/material/Grid';
 import Image from 'next/image';
 import PlayArrow from '@mui/icons-material/PlayArrow';
 import Pause from '@mui/icons-material/Pause';
@@ -15,23 +14,34 @@ import VolumeOff from '@mui/icons-material/VolumeOff';
 import Fullscreen from '@mui/icons-material/Fullscreen';
 import FullscreenExit from '@mui/icons-material/FullscreenExit';
 import Close from '@mui/icons-material/Close';
-import { styled } from '@mui/material/styles';
 import { videos } from '@/data/videos';
 import type { VideoItem } from '@/types/video';
+import { VideoThumbnail, PlayButton, ModalContent } from '@/styledComponents/about';
+
+// Create a wrapper div that will receive the ref
+const ModalWrapper = forwardRef<HTMLDivElement, {children: React.ReactNode}>(
+  ({ children }, ref) => (
+    <div ref={ref}>
+      {children}
+    </div>
+  )
+);
+
+ModalWrapper.displayName = 'ModalWrapper';
 
 // Simple wrapper for Modal that's compatible with React 19
 const CompatibleModal = forwardRef<HTMLDivElement, ModalProps>(({ children, ...props }, ref) => {
   // Create a container ref
   const containerRef = useRef<HTMLDivElement>(null);
   
-  // Use a callback ref to handle both function and object refs
+  // Set refs using a callback
   const setRefs = useCallback((node: HTMLDivElement | null) => {
-    // Set the local ref
+    // Update the local ref
     if (containerRef.current !== node) {
       containerRef.current = node;
     }
     
-    // Handle the forwarded ref
+    // Forward the ref
     if (typeof ref === 'function') {
       ref(node);
     } else if (ref) {
@@ -41,84 +51,16 @@ const CompatibleModal = forwardRef<HTMLDivElement, ModalProps>(({ children, ...p
   
   return (
     <Modal {...props}>
-      <div ref={setRefs}>
+      <ModalWrapper ref={setRefs}>
         {children}
-      </div>
+      </ModalWrapper>
     </Modal>
   );
 });
 
 CompatibleModal.displayName = 'CompatibleModal';
 
-const VideoThumbnail = styled(Box)(({ theme }) => ({
-  position: 'relative',
-  borderRadius: theme.shape.borderRadius,
-  overflow: 'hidden',
-  cursor: 'pointer',
-  transition: 'box-shadow 0.3s ease',
-  backgroundColor: '#f5f5f5',
-  minHeight: '200px',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  '&:hover': {
-    boxShadow: theme.shadows[6],
-    '& .play-button': {
-      transform: 'translate(-50%, -50%) scale(1.1)',
-      opacity: 0.9,
-    }
-  },
-  '& img': {
-    width: '100%',
-    height: 'auto',
-    objectFit: 'cover',
-  }
-}));
-
-const PlayButton = styled(Box)(() => ({
-  position: 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  width: 60,
-  height: 60,
-  borderRadius: '50%',
-  backgroundColor: 'rgba(255,255,255,0.8)',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  transition: 'all 0.3s ease',
-  willChange: 'transform',
-  '&:hover': {
-    backgroundColor: 'rgba(255,255,255,0.95)',
-  }
-}));
-
-const ModalContent = styled(Box)(({ theme }) => ({
-  position: 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  width: '90%',
-  maxWidth: '1100px',
-  backgroundColor: 'rgba(0, 0, 0, 0.9)',
-  boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.36)',
-  borderRadius: '12px',
-  outline: 'none',
-  maxHeight: '90vh',
-  overflow: 'hidden',
-  display: 'flex',
-  flexDirection: 'column',
-  backdropFilter: 'blur(10px)',
-  border: '1px solid rgba(255, 255, 255, 0.1)',
-  '&:focus-visible': {
-    outline: 'none',
-  },
-  [theme.breakpoints.down('sm')]: {
-    width: '95%',
-    maxHeight: '80vh',
-  },
-}));
+// Styled components have been moved to separate files in the styles directory
 
 export default function VideoGallery() {
   // State for video player
@@ -366,7 +308,7 @@ export default function VideoGallery() {
   };
 
   return (
-    <Box sx={{ p: { xs: 2, sm: 3 } }}>
+    <Box >
       {/* Mobile: Horizontal scroll */}
       <Box 
         ref={scrollContainerRef}
@@ -438,13 +380,10 @@ export default function VideoGallery() {
                   <PlayArrow sx={{ fontSize: 40, color: 'text.secondary' }} />
                 </Box>
               )}
-              <PlayButton className="play-button">
+<PlayButton className="play-button">
                 <PlayArrow sx={{ fontSize: 30, color: 'primary.main' }} />
               </PlayButton>
             </VideoThumbnail>
-            <Typography variant="subtitle1" mt={1} fontWeight={500}>
-              {video.title}
-            </Typography>
           </Box>
         ))}
       </Box>
