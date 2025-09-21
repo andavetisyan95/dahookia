@@ -6,25 +6,41 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "analyze": "cross-env ANALYZE=true next build",
+    "analyze:server": "cross-env ANALYZE=true next build",
+    "analyze:browser": "cross-env ANALYZE=true next build",
+    "profile": "cross-env PROFILE=true next build",
+    "test:performance": "lighthouse http://localhost:3000 --view --output-path=./lighthouse-report.html"
   },
   "dependencies": {
-    "@emotion/react": "^11.14.0",
-    "@emotion/styled": "^11.14.1",
-    "@mui/icons-material": "^7.3.1",
-    "@mui/material": "^7.3.1",
+    "@emotion/react": "^11.11.3",
+    "@emotion/styled": "^11.11.0",
+    "@mui/icons-material": "^5.15.15",
+    "@mui/material": "^5.15.15",
     "framer-motion": "^12.23.12",
     "next": "15.4.7",
     "react": "19.1.0",
-    "react-dom": "19.1.0"
+    "react-dom": "19.1.0",
+    "react-intersection-observer": "^9.10.0",
+    "sharp": "^0.33.3"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
+    "@next/bundle-analyzer": "^15.5.3",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "babel-plugin-direct-import": "^1.0.0",
+    "babel-plugin-import": "^1.13.8",
+    "babel-plugin-transform-remove-console": "^6.9.4",
+    "critters": "^0.0.25",
+    "cross-env": "^7.0.3",
     "eslint": "^9",
     "eslint-config-next": "15.4.7",
-    "typescript": "^5"
+    "lighthouse": "^10.4.0",
+    "next-sitemap": "^4.2.3",
+    "typescript": "^5",
+    "webpack-bundle-analyzer": "^4.10.1"
   }
 }

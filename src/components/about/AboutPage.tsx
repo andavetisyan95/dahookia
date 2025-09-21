@@ -2,13 +2,17 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
-import { Box, Typography, Breadcrumbs, Divider, Button, Container } from '@mui/material';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import Breadcrumbs from '@mui/material/Breadcrumbs';
+import Button from '@mui/material/Button';
+import Container from '@mui/material/Container';
 import dynamicImport from 'next/dynamic';
 import HomeIcon from '@mui/icons-material/Home';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
-import { styled } from '@mui/material/styles';
-import { videoItems } from '@/constants/videos';
+import { videos as videoItems } from '@/data/videos';
 import type { VideoItem } from '@/types/video';
 
 // Dynamically import client-side only components with proper error handling
@@ -162,44 +166,53 @@ export default function AboutPage() {
           }}>
             <Box sx={{ 
               flex: 1.5,
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'center',
               '& p': {
-                marginBottom: '1.5rem',
+                marginBottom: '0.8rem',
                 lineHeight: 1.8,
                 fontSize: '1.1rem',
                 color: '#333'
+              },
+              '& p:last-child': {
+                marginBottom: 0
               }
             }}>
-              <p><strong>Welcome to our professional ski and snowboard school</strong> in the heart of Tsaghkadzor, Armenia's premier winter sports destination. Our certified instructors are passionate about sharing their love for winter sports with students of all levels.</p>
+              <p><strong>Welcome to our professional ski and snowboard school</strong> in the heart of Tsaghkadzor, Armenia&apos;s premier winter sports destination. Our certified instructors are passionate about sharing their love for winter sports with students of all levels.</p>
               
               <p>Located at an elevation of 1,966 meters, <strong>Tsaghkadzor</strong> offers excellent snow conditions from December through March, with modern lifts and well-groomed slopes perfect for learning and improving your skills.</p>
               
-              <p>We offer private and group lessons for all ages and abilities. Whether you're taking your first turns or perfecting advanced techniques, our instructors will help you progress in a fun, safe environment.</p>
+              <p>It&apos;s our mission to help you achieve your goals and reach new heights in your career. Whether you&apos;re just starting out or looking to take the next step, we&apos;re here to support you every step of the way.chniques, our instructors will help you progress in a fun, safe environment.</p>
             </Box>
             
             <Box sx={{ 
               flex: 1,
               position: 'relative',
               width: '100%',
-              height: { xs: '300px', md: '500px' },
-              borderRadius: 2,
+              height: '100%',
+              minHeight: { xs: '300px', md: '400px' },
+              maxHeight: { md: '500px' },
               overflow: 'hidden',
+              borderRadius: 2,
               boxShadow: 3,
               margin: { xs: '0 auto', md: '0' },
+              alignSelf: 'stretch',
               '&:hover img': {
                 transform: 'scale(1.02)'
               }
             }}>
-              <img 
+              <Image 
                 src="/aboutPage/instructor.jpg" 
                 alt="Ski instructor in Tsaghkadzor"
+                fill
+                sizes="(max-width: 768px) 100vw, 50vw"
                 style={{
-                  width: '100%',
-                  height: '100%',
                   objectFit: 'cover',
                   objectPosition: 'center',
                   transition: 'transform 0.3s ease',
-                  display: 'block'
                 }}
+                priority
               />
             </Box>
           </Box>

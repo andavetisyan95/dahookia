@@ -11,8 +11,15 @@ const ExperienceSection = dynamic(
 );
 
 // Dynamically import VideoBackground with no SSR
-const VideoBackground = dynamic(
-  () => import('../common/VideoBackground'),
+const VideoBackground = dynamic<{
+  videoSrc: string;
+  imageSrc: string;
+  priority?: boolean;
+  children?: React.ReactNode;
+  onEnded?: () => void;
+  onCanPlay?: () => void;
+}>(
+  () => import('../video/VideoBackground').then(mod => mod.default),
   { 
     ssr: false,
     loading: () => (

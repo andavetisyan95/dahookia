@@ -2,7 +2,6 @@
 
 import { Box, Typography } from "@mui/material";
 import { useEffect, useState, useRef } from "react";
-import dynamic from 'next/dynamic';
 
 const ExperienceSection: React.FC = () => {
   const [isVisible, setIsVisible] = useState(false);
@@ -15,6 +14,9 @@ const ExperienceSection: React.FC = () => {
     
     // Only run in browser
     if (typeof window === 'undefined') return;
+
+    const currentRef = sectionRef.current;
+    if (!currentRef) return;
 
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -48,14 +50,10 @@ const ExperienceSection: React.FC = () => {
       { threshold: 0.3 }
     );
 
-    if (sectionRef.current) {
-      observer.observe(sectionRef.current);
-    }
+    observer.observe(currentRef);
 
     return () => {
-      if (sectionRef.current) {
-        observer.unobserve(sectionRef.current);
-      }
+      observer.unobserve(currentRef);
       observer.disconnect();
     };
   }, []);
