@@ -18,42 +18,37 @@ import { videos } from '@/data/videos';
 import type { VideoItem } from '@/types/video';
 import { VideoThumbnail, PlayButton, ModalContent } from '@/styledComponents/about';
 
-// Create a wrapper div that will receive the ref
-const ModalWrapper = forwardRef<HTMLDivElement, {children: React.ReactNode}>(
-  ({ children }, ref) => (
-    <div ref={ref}>
-      {children}
-    </div>
-  )
-);
-
-ModalWrapper.displayName = 'ModalWrapper';
-
 // Simple wrapper for Modal that's compatible with React 19
 const CompatibleModal = forwardRef<HTMLDivElement, ModalProps>(({ children, ...props }, ref) => {
   // Create a container ref
   const containerRef = useRef<HTMLDivElement>(null);
   
-  // Set refs using a callback
+  // Combine refs using a callback
   const setRefs = useCallback((node: HTMLDivElement | null) => {
     // Update the local ref
-    if (containerRef.current !== node) {
-      containerRef.current = node;
-    }
+    containerRef.current = node;
     
     // Forward the ref
-    if (typeof ref === 'function') {
-      ref(node);
-    } else if (ref) {
-      ref.current = node;
+    if (ref) {
+      if (typeof ref === 'function') {
+        ref(node);
+      } else {
+        ref.current = node;
+      }
     }
   }, [ref]);
   
   return (
-    <Modal {...props}>
-      <ModalWrapper ref={setRefs}>
-        {children}
-      </ModalWrapper>
+    <Modal 
+      {...props} 
+      slotProps={{
+        root: {
+          // @ts-ignore - Workaround for React 19 ref handling
+          ref: setRefs
+        }
+      }}
+    >
+      {children}
     </Modal>
   );
 });
@@ -83,13 +78,21 @@ export default function VideoGallery() {
     if (!container) return;
 
     const handleWheel = (e: WheelEvent) => {
-      if (e.deltaY === 0) return;
-      e.preventDefault();
-      container.scrollLeft += e.deltaY + e.deltaX;
+      // Only handle horizontal scroll when the container is scrollable
+      if (container.scrollWidth > container.clientWidth) {
+        // Prevent vertical scroll when scrolling horizontally
+        if (Math.abs(e.deltaX) < Math.abs(e.deltaY)) {
+          e.preventDefault();
+          container.scrollLeft += e.deltaY + e.deltaX;
+        }
+      }
     };
 
+    // Add both wheel and wheel event for better browser compatibility
     container.addEventListener('wheel', handleWheel, { passive: false });
-    return () => container.removeEventListener('wheel', handleWheel);
+    return () => {
+      container.removeEventListener('wheel', handleWheel);
+    };
   }, []);
 
   // Refs
@@ -98,7 +101,8 @@ export default function VideoGallery() {
   const controlsTimeout = useRef<NodeJS.Timeout | null>(null);
 
   // Handle thumbnail image error
-  const handleThumbnailError = () => {
+  const handleThumbnailError = (id: number) => {
+    console.warn(`Failed to load thumbnail for video ${id}`);
     setThumbnailError(true);
   };
 
@@ -302,71 +306,137 @@ export default function VideoGallery() {
     return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
   };
 
-  // Get video source URL
+  // Get video source URL with validation
   const getVideoSource = (video: VideoItem): string => {
-    return video.videoUrl;
+    try {
+      // Ensure the URL is properly formatted
+      const url = new URL(video.videoUrl, window.location.origin);
+      return url.toString();
+    } catch (error) {
+      console.error('Invalid video URL:', video.videoUrl, error);
+      return '';
+    }
+  };
+  
+  // Handle video error
+  const handleVideoError = (error: React.SyntheticEvent<HTMLVideoElement>) => {
+    console.error('Error loading video:', error);
+    // You might want to show an error state to the user here
   };
 
   return (
-    <Box >
-      {/* Mobile: Horizontal scroll */}
+    <Box sx={{ width: '100%', overflow: 'hidden' }}>
+      <Typography variant="h4" component="h2" sx={{ 
+        mb: 4, 
+        textAlign: 'center', 
+        fontWeight: 'bold',
+        fontSize: { xs: '1.75rem', sm: '2rem' } 
+      }}>
+        Video Gallery
+      </Typography>
+      
+      {/* Video Gallery Container with Horizontal Scroll */}
       <Box 
         ref={scrollContainerRef}
         sx={{
-        display: { xs: 'flex', sm: 'grid' },
-        gridTemplateColumns: {
-          sm: 'repeat(2, 1fr)',
-          md: 'repeat(3, 1fr)',
-        },
-        gap: 3,
-        width: '100%',
-        overflowX: { xs: 'auto', sm: 'visible' },
-        flexWrap: { xs: 'nowrap', sm: 'wrap' },
-        pb: 1, // Add some padding for scrollbar
-        // Show scrollbar on mobile
-        '&::-webkit-scrollbar': {
-          height: 6,
-        },
-        '&::-webkit-scrollbar-track': {
-          background: 'rgba(0, 0, 0, 0.1)',
-          borderRadius: 3,
-        },
-        '&::-webkit-scrollbar-thumb': {
-          background: 'rgba(0, 0, 0, 0.2)',
-          borderRadius: 3,
-          '&:hover': {
-            background: 'rgba(0, 0, 0, 0.3)',
+          display: 'flex',
+          flexDirection: 'row',
+          gap: { xs: 2, sm: 3 },
+          width: '100%',
+          overflowX: 'auto',
+          overflowY: 'hidden',
+          flexWrap: 'nowrap',
+          py: 2,
+          px: { xs: 2, sm: 3 },
+          mx: { xs: -2, sm: -3 },
+          // Force hardware acceleration for smoother scrolling
+          WebkitOverflowScrolling: 'touch',
+          // Custom scrollbar for webkit browsers
+          '&::-webkit-scrollbar': {
+            height: 6,
+            display: 'block',
           },
-        },
-        '& > *': {
-          flex: { xs: '0 0 80%', sm: 'auto' },
-          maxWidth: { xs: '80%', sm: 'none' },
-        },
-      }}>
-        {videos.map((video) => (
-          <Box key={video.id} sx={{ 
-            width: '100%',
+          '&::-webkit-scrollbar-track': {
+            background: 'rgba(0, 0, 0, 0.05)',
+            borderRadius: 3,
+            margin: '0 16px',
+          },
+          '&::-webkit-scrollbar-thumb': {
+            background: 'rgba(0, 0, 0, 0.2)',
+            borderRadius: 3,
+            '&:hover': {
+              background: 'rgba(0, 0, 0, 0.3)',
+            },
+          },
+          // Hide scrollbar for Firefox
+          scrollbarWidth: 'thin',
+          scrollbarColor: 'rgba(0, 0, 0, 0.2) transparent',
+          // Smooth scrolling
+          scrollBehavior: 'smooth',
+          // Grid layout for larger screens
+          '@media (min-width: 600px)': {
+            display: 'grid',
+            gridTemplateColumns: 'repeat(2, 1fr)',
+            overflowX: 'visible',
+            flexWrap: 'wrap',
+            '& > *': {
+              width: '100%',
+            },
+          },
+          '@media (min-width: 900px)': {
+            gridTemplateColumns: 'repeat(3, 1fr)',
+          },
+          // Ensure content doesn't get cut off
+          '&:after': {
+            content: '""',
+            minWidth: { xs: '16px', sm: 0 },
+            height: '1px',
             flexShrink: 0,
-          }}>
+          },
+        }}
+      >
+        {videos.map((video) => (
+          <Box 
+            key={video.id} 
+            sx={{ 
+              width: { xs: '280px', sm: '100%' },
+              flexShrink: 0,
+              position: 'relative',
+              transition: 'transform 0.2s ease',
+              '&:active': {
+                transform: 'scale(0.98)',
+              },
+              '@media (min-width: 600px)': {
+                '&:hover': {
+                  transform: 'translateY(-4px)',
+                  boxShadow: '0 10px 20px rgba(0,0,0,0.1)',
+                },
+              },
+            }}
+          >
             <VideoThumbnail 
               onClick={() => handleVideoClick(video)}
               sx={{
                 width: '100%',
-                height: { xs: '180px', sm: '180px', md: '200px' },
+                height: { xs: '160px', sm: '180px', md: '200px' },
+                borderRadius: '8px',
+                overflow: 'hidden',
               }}
             >
               {!thumbnailError && video.thumbnail ? (
                 <Image
                   src={video.thumbnail}
-                  alt={video.title}
+                  alt={`Thumbnail for ${video.title}`}
                   width={400}
                   height={225}
-                  onError={handleThumbnailError}
+                  onError={() => handleThumbnailError(video.id)}
                   style={{ 
                     width: '100%',
                     height: '100%',
-                    objectFit: 'cover' 
+                    objectFit: 'cover',
+                    backgroundColor: 'rgba(0,0,0,0.05)'
                   }}
+                  unoptimized={process.env.NODE_ENV === 'development'} // Disable optimization in development
                 />
               ) : (
                 <Box sx={{ 
@@ -457,30 +527,40 @@ export default function VideoGallery() {
             </IconButton>
             {selectedVideo && (
               <>
-                <video
-                  ref={videoRef}
-                  src={getVideoSource(selectedVideo)}
-                  style={{
-                    position: 'absolute',
-                    top: 0,
-                    left: 0,
-                    objectFit: 'cover',
-                    width: '100%',
-                    height: '100%',
-                    outline: 'none',
-                  }}
-                  onTimeUpdate={handleTimeUpdate}
-                  onLoadedMetadata={handleLoadedMetadata}
-                  onEnded={() => setIsPlaying(false)}
-                  onPlay={() => setIsPlaying(true)}
-                  onPause={() => setIsPlaying(false)}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    togglePlay();
-                  }}
-                  onKeyDown={handleKeyDown}
-                  tabIndex={0}
-                />
+                <Box sx={{
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  width: '100%',
+                  height: '100%',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  backgroundColor: '#000',
+                }}>
+                  <video
+                    ref={videoRef}
+                    src={getVideoSource(selectedVideo)}
+                    onClick={togglePlay}
+                    onTimeUpdate={handleTimeUpdate}
+                    onLoadedMetadata={handleLoadedMetadata}
+                    onEnded={() => setIsPlaying(false)}
+                    onPlay={() => setIsPlaying(true)}
+                    onPause={() => setIsPlaying(false)}
+                    onError={handleVideoError}
+                    style={{
+                      maxWidth: '100%',
+                      maxHeight: '100%',
+                      outline: 'none',
+                      objectFit: 'contain',
+                    }}
+                    tabIndex={0}
+                    onKeyDown={handleKeyDown}
+                    aria-label={`Video player: ${selectedVideo.title}`}
+                    playsInline
+                    preload="metadata"
+                  />
+                </Box>
 
                 {/* Overlay Play Button */}
                 {!isPlaying && (
@@ -531,11 +611,14 @@ export default function VideoGallery() {
                     bottom: 0,
                     left: 0,
                     right: 0,
-                    background: 'linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 100%)',
-                    padding: '16px',
+                    background: 'linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 100%)',
+                    padding: '16px 16px 24px',
                     opacity: showControls ? 1 : 0,
                     transition: 'opacity 0.3s ease',
                     zIndex: 10,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '8px',
                   }}
                   onClick={(e) => e.stopPropagation()}
                 >
