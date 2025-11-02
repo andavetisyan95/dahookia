@@ -49,7 +49,6 @@ const CompatibleModal = forwardRef<HTMLDivElement, ModalProps>(({ children, ...p
       {...props} 
       slotProps={{
         root: {
-          // @ts-ignore - Workaround for React 19 ref handling
           ref: setRefs
         }
       }}

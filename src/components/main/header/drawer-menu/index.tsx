@@ -52,7 +52,6 @@ type DrawerMenuProps = {
 
 function DrawerMenu({ openDrawer, closeDrawer }: DrawerMenuProps) {
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const [isBrowser, setIsBrowser] = useState(false);
 
   // Only render on client-side
