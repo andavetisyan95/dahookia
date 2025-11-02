@@ -261,7 +261,10 @@ export default function AboutPage() {
               mb: 3, 
               fontWeight: 700,
               fontSize: { xs: '1.75rem', md: '2.125rem' },
-              color: 'text.primary'
+              color: '#2c3e50',
+              lineHeight: 1.2,
+              letterSpacing: '-0.5px',
+              fontFamily: '"Montserrat", sans-serif'  
             }}
           >
             Experience the Magic of Dahookia

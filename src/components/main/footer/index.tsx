@@ -93,34 +93,48 @@ const Footer = () => {
                 justifyContent: { xs: 'center', md: 'flex-start' },
                 mt: 1
               }}>
-                <IconButton 
-                  aria-label="Facebook" 
-                  sx={{ 
-                    color: 'white', 
-                    transition: 'all 0.3s ease',
-                    '&:hover': { 
-                      color: '#4267B2',
-                      transform: 'translateY(-2px)',
-                      backgroundColor: 'rgba(255, 255, 255, 0.1)'
-                    } 
-                  }}
+                <MuiLink 
+                  href="https://www.facebook.com/dahookia" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  sx={{ display: 'inline-flex' }}
                 >
-                  <Facebook />
-                </IconButton>
-                <IconButton 
-                  aria-label="Instagram" 
-                  sx={{ 
-                    color: 'white', 
-                    transition: 'all 0.3s ease',
-                    '&:hover': { 
-                      color: '#E1306C',
-                      transform: 'translateY(-2px)',
-                      backgroundColor: 'rgba(255, 255, 255, 0.1)'
-                    } 
-                  }}
+                  <IconButton 
+                    aria-label="Facebook" 
+                    sx={{ 
+                      color: 'white', 
+                      transition: 'all 0.3s ease',
+                      '&:hover': { 
+                        color: '#4267B2',
+                        transform: 'translateY(-2px)',
+                        backgroundColor: 'rgba(255, 255, 255, 0.1)'
+                      } 
+                    }}
+                  >
+                    <Facebook />
+                  </IconButton>
+                </MuiLink>
+                <MuiLink 
+                  href="https://www.instagram.com/dahookia/" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  sx={{ display: 'inline-flex' }}
                 >
-                  <Instagram />
-                </IconButton>
+                  <IconButton 
+                    aria-label="Instagram" 
+                    sx={{ 
+                      color: 'white', 
+                      transition: 'all 0.3s ease',
+                      '&:hover': { 
+                        color: '#E1306C',
+                        transform: 'translateY(-2px)',
+                        backgroundColor: 'rgba(255, 255, 255, 0.1)'
+                      } 
+                    }}
+                  >
+                    <Instagram />
+                  </IconButton>
+                </MuiLink>
               </Box>
             </Box>
           </FooterColumn>
@@ -183,7 +197,7 @@ const Footer = () => {
                 } 
               }}>
                 <LocationOn sx={{ opacity: 0.8, minWidth: 24 }} />
-                <Typography variant="body2">Tsaghkadzor, Tandzaghbyuri St.</Typography>
+                <Typography variant="body2">Ropeway of Tsaghkadzor</Typography>
               </Box>
               <MuiLink 
                 href="tel:+37477270079" 
@@ -223,7 +237,7 @@ const Footer = () => {
                 }}
               >
                 <Email sx={{ opacity: 0.8, minWidth: 24 }} />
-                <Typography variant="body2">info@dahookia.com</Typography>
+                <Typography variant="body2">dahookia@gmail.com</Typography>
               </MuiLink>
             </Box>
           </FooterColumn>

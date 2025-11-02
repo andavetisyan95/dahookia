@@ -10,13 +10,13 @@ type socialIconsProps = {
       id: 1,
       imgName: "Facebook",
       imgPath: "/images/icons/socials/facebook.svg",
-      url: "https://www.facebook.com/",
+      url: "https://www.facebook.com/dahookia",
     },
     {
       id: 2,
       imgName: "Instagram",
       imgPath: "/images/icons/socials/insta.svg",
-      url: "https://www.instagram.com/",
+      url: "https://www.instagram.com/dahookia/",
     },
   ];
   

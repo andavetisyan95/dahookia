@@ -1,7 +1,7 @@
 export const pages = [
   { name: 'Home', href: '/' },
   { name: 'About', href: '/about' },
-  { name: 'Services', href: '/services' },
+  { name: 'Lessons', href: '/lessons' },
   { name: 'Booking', href: '/booking' },
   { name: 'Contact', href: '/contact' },
 ];

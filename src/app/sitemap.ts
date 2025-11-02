@@ -20,12 +20,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: 'weekly',
       priority: 0.9,
     },
-    {
-      url: 'https://dahookia.com/gallery',
-      lastModified: new Date(),
-      changeFrequency: 'weekly',
-      priority: 0.7,
-    },
+    // {
+    //   url: 'https://dahookia.com/gallery',
+    //   lastModified: new Date(),
+    //   changeFrequency: 'weekly',
+    //   priority: 0.7,
+    // },
     {
       url: 'https://dahookia.com/booking',
       lastModified: new Date(),
