@@ -14,6 +14,7 @@ import HomeIcon from '@mui/icons-material/Home';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import { videos as videoItems } from '@/data/videos';
 import type { VideoItem } from '@/types/video';
+import Breadcrumb from '@/components/common/Breadcrumb';
 
 // Dynamically import client-side only components with proper error handling
 const VideoGallery = dynamicImport<{ videos: VideoItem[] }>(
@@ -33,90 +34,14 @@ const VideoGallery = dynamicImport<{ videos: VideoItem[] }>(
 export const dynamic = 'force-dynamic';
 
 function BreadcrumbNav() {
-  const [isNavigating, setIsNavigating] = useState(false);
-  const pathname = usePathname();
-
-  const handleNavigation = () => {
-    if (pathname !== '/') {
-      setIsNavigating(true);
-    }
-  };
-
   return (
-    <>
-      <Breadcrumbs 
-        aria-label="breadcrumb" 
-        separator={<NavigateNextIcon fontSize="small" />}
-        sx={{ 
-          mb: 4,
-          '& .MuiBreadcrumbs-ol': {
-            justifyContent: 'flex-start',
-          }
-        }}
-      >
-        <Link 
-          href="/"
-          passHref
-          onClick={handleNavigation}
-          style={{ textDecoration: 'none' }}
-        >
-          <Box 
-            component="span"
-            sx={{
-              display: 'flex',
-              alignItems: 'center',
-              color: '#757574', // Darker silver for better visibility
-              textDecoration: 'none',
-              '&:hover': {
-                color: 'primary.main',
-                textDecoration: 'none',
-              }
-            }}
-          >
-            <HomeIcon sx={{ mr: 0.5 }} fontSize="small" />
-            Home
-          </Box>
-        </Link>
-        <Typography color="primary" fontWeight={500}>
-          About
-        </Typography>
-      </Breadcrumbs>
-      {isNavigating && (
-        <Box sx={{ 
-          position: 'fixed', 
-          top: 0, 
-          left: 0, 
-          right: 0, 
-          bottom: 0, 
-          backgroundColor: 'rgba(255, 255, 255, 0.8)', 
-          zIndex: 9999,
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center'
-        }}>
-          <Box sx={{ 
-            width: 60, 
-            height: 60, 
-            border: '4px solid #f3f3f3',
-            borderTop: '4px solid #3f51b5',
-            borderRadius: '50%',
-            animation: 'spin 1s linear infinite',
-            '@keyframes spin': {
-              '0%': { transform: 'rotate(0deg)' },
-              '100%': { transform: 'rotate(360deg)' }
-            }
-          }} />
-        </Box>
-      )}
-    </>
+    <Breadcrumb currentPage="About" />
   );
 }
 
 export default function AboutPage() {
   return (
     <Box sx={{ 
-      pt: { xs: 14, md: 16 },
-      pb: { xs: 6, md: 12 },
       minHeight: '100vh',
       position: 'relative',
       fontFamily: '"Montserrat", "Roboto", sans-serif',
@@ -133,7 +58,15 @@ export default function AboutPage() {
         borderBottom: '1px solid rgba(0, 0, 0, 0.1)'
       }
     }}>
-      <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 1 }}>
+      <Container 
+        maxWidth="lg" 
+        sx={{ 
+          position: 'relative', 
+          zIndex: 1,
+          pt: { xs: 14, md: 16 },
+          pb: { xs: 6, md: 12 },
+        }}
+      >
         <BreadcrumbNav />
         
         <Box sx={{ 

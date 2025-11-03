@@ -1,4 +1,4 @@
-import { memo, useEffect, useState } from 'react';
+import { memo, useEffect, useState, useRef } from 'react';
 import { Box, IconButton, Stack, Typography, Divider, useTheme, useMediaQuery } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import Link from 'next/link';
@@ -52,11 +52,15 @@ type DrawerMenuProps = {
 
 function DrawerMenu({ openDrawer, closeDrawer }: DrawerMenuProps) {
   const theme = useTheme();
-  const [isBrowser, setIsBrowser] = useState(false);
+  const [mounted, setMounted] = useState(false);
+  const isFirstRender = useRef(true);
 
-  // Only render on client-side
+  // Only render on client-side after mount
   useEffect(() => {
-    setIsBrowser(true);
+    setMounted(true);
+    return () => {
+      isFirstRender.current = false;
+    };
   }, []);
 
   // Close drawer when clicking on the backdrop
@@ -68,13 +72,15 @@ function DrawerMenu({ openDrawer, closeDrawer }: DrawerMenuProps) {
 
   // Close drawer when pressing Escape key
   useEffect(() => {
+    if (!mounted) return;
+    
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape' && openDrawer) {
         closeDrawer();
       }
     };
 
-    if (isBrowser && openDrawer) {
+    if (openDrawer) {
       document.addEventListener('keydown', handleKeyDown);
       document.body.style.overflow = 'hidden';
     }
@@ -83,9 +89,10 @@ function DrawerMenu({ openDrawer, closeDrawer }: DrawerMenuProps) {
       document.removeEventListener('keydown', handleKeyDown);
       document.body.style.overflow = 'auto';
     };
-  }, [openDrawer, closeDrawer, isBrowser]);
+  }, [openDrawer, closeDrawer, mounted]);
 
-  if (!isBrowser) {
+  // Don't render anything during SSR or before first client-side render
+  if (!mounted || isFirstRender.current) {
     return null;
   }
 
