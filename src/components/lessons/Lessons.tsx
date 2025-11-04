@@ -1,78 +1,79 @@
 'use client';
 
-import { Box, Typography, Container, Grid, Card, CardContent, Button } from '@mui/material';
+import { useState } from 'react';
+import { 
+  Box, 
+  Typography, 
+  Container, 
+  Grid, 
+  Card,
+  CardContent, 
+  Button, 
+  Divider, 
+  Chip,
+  Tabs,
+  Tab,
+  useTheme,
+  useMediaQuery
+} from '@mui/material';
+import StarIcon from '@mui/icons-material/Star';
 import Image from 'next/image';
 import Breadcrumb from '@/components/common/Breadcrumb';
+import { lessons, type LessonCategory } from './lessonsData';
+import { 
+  StyledCard, 
+  StyledCardMedia, 
+  PopularBadge, 
+  Price, 
+  OriginalPrice, 
+  FeatureItem 
+} from './styles';
 
-interface LessonCardProps {
-  title: string;
-  description: string;
-  imageSrc: string;
-  imageAlt: string;
-  onBookNow: () => void;
+interface TabPanelProps {
+  children?: React.ReactNode;
+  index: number;
+  value: number;
 }
 
-const LessonCard = ({ title, description, imageSrc, imageAlt, onBookNow }: LessonCardProps) => (
-  <Card 
-    elevation={3} 
-    sx={{
-      height: '100%',
-      display: 'flex',
-      flexDirection: 'column',
-      transition: 'transform 0.3s ease, box-shadow 0.3s ease',
-      '&:hover': {
-        transform: 'translateY(-5px)',
-        boxShadow: 6,
-      },
-    }}
-  >
-    <Box sx={{ position: 'relative', height: '300px', width: '100%' }}>
-      <Image
-        src={imageSrc}
-        alt={imageAlt}
-        fill
-        style={{ objectFit: 'cover' }}
-        priority
-      />
-    </Box>
-    <CardContent sx={{ flexGrow: 1, p: 4 }}>
-      <Typography gutterBottom variant="h4" component="h2" sx={{ fontWeight: 600, mb: 2 }}>
-        {title}
-      </Typography>
-      <Typography variant="body1" color="text.secondary" sx={{ mb: 3, lineHeight: 1.7 }}>
-        {description}
-      </Typography>
-      <Button 
-        variant="contained" 
-        color="primary" 
-        size="large"
-        onClick={onBookNow}
-        sx={{ mt: 2 }}
-      >
-        Book Now
-      </Button>
-    </CardContent>
-  </Card>
-);
+function TabPanel(props: TabPanelProps) {
+  const { children, value, index, ...other } = props;
 
-const Lessons = () => {
-  const lessons = [
-    {
-      title: 'Private Ski Lessons',
-      description: 'Experience personalized ski instruction tailored to your skill level. Our certified instructors will help you master the slopes with confidence, whether you\'re a beginner or looking to refine your technique.',
-      imageSrc: '/services/skilesson.jpg',
-      imageAlt: 'Private Ski Lessons',
-    },
-    {
-      title: 'Private Snowboard Lessons',
-      description: 'Take your snowboarding to the next level with our expert instructors. From your first turns to advanced freestyle tricks, we\'ll help you progress at your own pace in a fun and supportive environment.',
-      imageSrc: '/services/boardlesson.jpg',
-      imageAlt: 'Private Snowboard Lessons',
-    },
-  ];
+  return (
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`lesson-tabpanel-${index}`}
+      aria-labelledby={`lesson-tab-${index}`}
+      {...other}
+    >
+      {value === index && (
+        <Box sx={{ p: 3 }}>
+          {children}
+        </Box>
+      )}
+    </div>
+  );
+}
 
-  const handleBookNow = (lessonType: string) => {
-    console.log(`Booking ${lessonType}`);
+function a11yProps(index: number) {
+  return {
+    id: `lesson-tab-${index}`,
+    'aria-controls': `lesson-tabpanel-${index}`,
+  };
+}
+
+const Lessons: React.FC = () => {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const [tabValue, setTabValue] = useState(0);
+  
+  const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
+    setTabValue(newValue);
+  };
+
+  const handleBookNow = (title: string) => {
+    console.log(`Booking ${title}`);
+    // Add your booking logic here
   };
 
   return (
@@ -182,43 +183,292 @@ const Lessons = () => {
         </Box>
       </Box>
 
-      {/* Lessons Grid Section */}
-      <Box sx={{ 
-        py: 8, 
-        px: { xs: 2, sm: 3, md: 4 }, 
-        bgcolor: 'background.paper',
-        position: 'relative',
-        zIndex: 1
-      }}>
-        <Container maxWidth="lg">
-          <Typography 
-            variant="h2" 
-            component="h2" 
-            sx={{ 
-              textAlign: 'center', 
-              mb: 6,
-              fontWeight: 700,
-              fontSize: { xs: '2rem', sm: '2.5rem' }
+      <Container maxWidth="lg" sx={{ py: 8 }}>
+        {/* Tabs */}
+        <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 4 }}>
+          <Tabs 
+            value={tabValue} 
+            onChange={handleTabChange} 
+            aria-label="lesson categories"
+            variant={isMobile ? 'scrollable' : 'standard'}
+            scrollButtons="auto"
+            sx={{
+              '& .MuiTabs-indicator': {
+                backgroundColor: '#1976d2',
+                height: '3px',
+              },
+              '& .MuiTab-root': {
+                textTransform: 'none',
+                fontWeight: 600,
+                fontSize: '1.1rem',
+                color: '#64748b',
+                '&.Mui-selected': {
+                  color: '#1976d2',
+                },
+              },
             }}
           >
-            Our Lesson Programs
+            <Tab 
+              label="Ski Lessons"
+              {...a11yProps(0)} 
+              sx={{ 
+                minWidth: isMobile ? 'auto' : 140, 
+                px: { xs: 2, sm: 3 },
+                fontWeight: 600,
+                fontSize: '1rem',
+              }}
+            />
+            <Tab 
+              label="Snowboard Lessons"
+              {...a11yProps(1)} 
+              sx={{ 
+                minWidth: isMobile ? 'auto' : 180, 
+                px: { xs: 2, sm: 3 },
+                fontWeight: 600,
+                fontSize: '1rem',
+              }}
+            />
+          </Tabs>
+        </Box>
+
+        {/* Tab Panels */}
+        {lessons.map((category, index) => (
+          <TabPanel key={category.id} value={tabValue} index={index}>
+            <Box sx={{ mb: 4, maxWidth: '800px' }}>
+              {category.description.split('\n\n').map((paragraph, idx) => (
+                <Typography 
+                  key={idx} 
+                  variant={idx === 0 ? 'h5' : 'body1'} 
+                  component={idx === 0 ? 'h2' : 'p'}
+                  color="text.primary"
+                  sx={{ 
+                    mb: 2.5,
+                    fontWeight: idx === 0 ? 800 : 400,
+                    fontSize: idx === 0 ? { xs: '1.5rem', md: '2rem' } : '1rem',
+                    lineHeight: 1.2,
+                    color: idx === 0 ? '#2c3e50' : '#64748b',
+                    letterSpacing: idx === 0 ? '-0.5px' : 'normal',
+                    fontFamily: idx === 0 ? '"Druk Wide Heavy Italic", sans-serif' : 'inherit',
+                    fontStyle: idx === 0 ? 'italic' : 'normal',
+                    textTransform: idx === 0 ? 'uppercase' : 'none',
+                    '&:last-child': {
+                      mb: 0
+                    },
+                    '@media (min-width: 900px)': {
+                      fontSize: idx === 0 ? '2rem' : '1rem',
+                    },
+                    '@media (max-width: 600px)': {
+                      fontSize: idx === 0 ? '1.5rem' : '1rem',
+                    }
+                  }}
+                >
+                  {paragraph.replace('**', '').replace('**', '')}
+                </Typography>
+              ))}
+            </Box>
+            
+            <Grid container spacing={3}>
+              {category.types.map((lesson) => (
+                <Grid item xs={12} sm={6} md={4} key={lesson.id}>
+                  <StyledCard elevation={3}>
+                    {lesson.isPopular && (
+                      <PopularBadge
+                        icon={<StarIcon />}
+                        label="Most Popular"
+                      />
+                    )}
+                    <StyledCardMedia>
+                      <Image
+                        src={category.imageSrc}
+                        alt={category.imageAlt}
+                        fill
+                        style={{ objectFit: 'cover' }}
+                        sizes="(max-width: 600px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                      />
+                    </StyledCardMedia>
+                    <CardContent sx={{ 
+                      flexGrow: 1, 
+                      display: 'flex', 
+                      flexDirection: 'column',
+                      padding: '24px',
+                      '&:last-child': { paddingBottom: '24px' }
+                    }}>
+                      <Typography 
+                        variant="h6" 
+                        component="h3" 
+                        sx={{
+                          fontSize: '1.4rem',
+                          fontWeight: 700,
+                          color: '#2c3e50',
+                          mb: 1.5,
+                          lineHeight: 1.3,
+                          fontFamily: '"Poppins", sans-serif',
+                        }}
+                      >
+                        {lesson.title}
+                      </Typography>
+                      <Typography 
+                        variant="body2" 
+                        sx={{
+                          color: '#64748b',
+                          mb: 2.5,
+                          fontSize: '0.95rem',
+                          lineHeight: 1.6,
+                        }}
+                      >
+                        {lesson.description}
+                      </Typography>
+                      
+                      <Box sx={{ 
+                        display: 'flex', 
+                        alignItems: 'flex-end', 
+                        mb: 2,
+                        flexWrap: 'wrap',
+                        gap: 1,
+                      }}>
+                        <Price>{lesson.price}</Price>
+                        {lesson.originalPrice && (
+                          <OriginalPrice>
+                            {lesson.originalPrice}
+                          </OriginalPrice>
+                        )}
+                        {lesson.discount && (
+                          <Chip
+                            label={lesson.discount}
+                            sx={{ 
+                              backgroundColor: 'rgba(25, 118, 210, 0.1)',
+                              color: '#1976d2',
+                              height: '24px',
+                              fontSize: '0.75rem',
+                              fontWeight: 600,
+                              ml: 1,
+                            }}
+                          />
+                        )}
+                      </Box>
+                      
+                      <Typography 
+                        variant="body2" 
+                        sx={{
+                          color: '#64748b',
+                          fontSize: '0.9rem',
+                          mb: 2.5,
+                          display: 'flex',
+                          alignItems: 'center',
+                          '&:before': {
+                            content: '"⏱️"',
+                            mr: 1,
+                            fontSize: '1rem',
+                          }
+                        }}
+                      >
+                        {lesson.duration}
+                      </Typography>
+                      
+                      <Divider sx={{ my: 2, borderColor: 'rgba(0, 0, 0, 0.04)' }} />
+                      
+                      <Typography 
+                        variant="subtitle2" 
+                        sx={{ 
+                          fontWeight: 700,
+                          color: '#2c3e50',
+                          mb: 1.5,
+                          fontSize: '0.9rem',
+                          letterSpacing: '0.5px',
+                          textTransform: 'uppercase',
+                          opacity: 0.8,
+                        }}
+                      >
+                        What's included:
+                      </Typography>
+                      <Box 
+                        component="ul" 
+                        sx={{ 
+                          pl: 0, 
+                          mb: 3, 
+                          mt: 0,
+                          '& li': {
+                            mb: 1.5,
+                            '&:last-child': {
+                              mb: 0
+                            }
+                          }
+                        }}
+                      >
+                        {lesson.features.map((feature: string, index: number) => (
+                          <FeatureItem key={index}>
+                            {feature}
+                          </FeatureItem>
+                        ))}
+                      </Box>
+                      
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        fullWidth
+                        size="large"
+                        onClick={() => handleBookNow(`${category.title} - ${lesson.title}`)}
+                        sx={{ 
+                          mt: 'auto',
+                          py: 1.5,
+                          fontWeight: 600,
+                          textTransform: 'none',
+                          borderRadius: '8px',
+                          fontSize: '1rem',
+                          letterSpacing: '0.5px',
+                          background: 'linear-gradient(45deg, #1976d2 30%, #21CBF3 90%)',
+                          boxShadow: '0 4px 12px rgba(25, 118, 210, 0.2)',
+                          '&:hover': {
+                            transform: 'translateY(-2px)',
+                            boxShadow: '0 6px 16px rgba(25, 118, 210, 0.3)',
+                            background: 'linear-gradient(45deg, #1565c0 30%, #00B0FF 90%)',
+                          },
+                          transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                        }}
+                      >
+                        Book Now
+                      </Button>
+                    </CardContent>
+                  </StyledCard>
+                </Grid>
+              ))}
+            </Grid>
+          </TabPanel>
+        ))}
+        
+        <Box sx={{ 
+          textAlign: 'center', 
+          mt: 8,
+          p: 6,
+          borderRadius: '12px',
+          backgroundColor: 'rgba(25, 118, 210, 0.05)',
+          border: '1px dashed rgba(25, 118, 210, 0.2)'
+        }}>
+          <Typography variant="h5" component="h3" gutterBottom sx={{ fontWeight: 600, mb: 2 }}>
+            Not sure which lesson is right for you?
           </Typography>
-          
-          <Grid container spacing={6} justifyContent="center">
-            {lessons.map((lesson) => (
-              <Grid item xs={12} md={6} key={lesson.title}>
-                <LessonCard
-                  title={lesson.title}
-                  description={lesson.description}
-                  imageSrc={lesson.imageSrc}
-                  imageAlt={lesson.imageAlt}
-                  onBookNow={() => handleBookNow(lesson.title)}
-                />
-              </Grid>
-            ))}
-          </Grid>
-        </Container>
-      </Box>
+          <Typography variant="body1" color="text.secondary" sx={{ maxWidth: '700px', mx: 'auto', mb: 3 }}>
+            Our instructors can help you choose the perfect lesson based on your skill level and goals.
+          </Typography>
+          <Button 
+            variant="outlined" 
+            color="primary" 
+            size="large"
+            sx={{
+              px: 4,
+              py: 1.5,
+              fontWeight: 600,
+              textTransform: 'none',
+              borderRadius: '50px',
+              '&:hover': {
+                backgroundColor: 'rgba(25, 118, 210, 0.04)'
+              }
+            }}
+          >
+            Get a Free Consultation
+          </Button>
+        </Box>
+      </Container>
     </Box>
   );
 };

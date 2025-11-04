@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { Box, Typography, Breadcrumbs as MuiBreadcrumbs } from '@mui/material';
 import Link from 'next/link';
 import HomeIcon from '@mui/icons-material/Home';
@@ -9,34 +9,65 @@ import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 
 interface BreadcrumbProps {
   currentPage: string;
+  sx?: object;
 }
 
-const Breadcrumb = ({ currentPage }: BreadcrumbProps) => {
+const Breadcrumb: React.FC<BreadcrumbProps> = ({ currentPage, sx = {} }) => {
   const [isNavigating, setIsNavigating] = useState(false);
+  const router = useRouter();
   const pathname = usePathname();
 
-  const handleNavigation = () => {
+  const handleNavigation = (e: React.MouseEvent) => {
     if (pathname !== '/') {
+      e.preventDefault();
       setIsNavigating(true);
+      router.push('/');
+      
+      // Reset navigation state after a short delay
+      const timer = setTimeout(() => {
+        setIsNavigating(false);
+      }, 1000);
+      
+      return () => clearTimeout(timer);
     }
   };
 
   return (
-    <Box sx={{ mb: 4, position: 'relative' }}>
+    <Box 
+      component="nav" 
+      aria-label="breadcrumb"
+      sx={{
+        width: '100%',
+        position: 'relative',
+        zIndex: 10,
+        pt: { xs: 2, md: 3 },
+        pb: 1,
+        px: { xs: 2, sm: 0 },
+        ...sx
+      }}
+    >
       <MuiBreadcrumbs 
         aria-label="breadcrumb" 
         separator={<NavigateNextIcon fontSize="small" />}
         sx={{ 
           '& .MuiBreadcrumbs-ol': {
             justifyContent: 'flex-start',
+            flexWrap: 'nowrap',
+            px: 0,
+            mx: 0,
           },
           '& .MuiBreadcrumbs-separator': {
             mx: 1,
-          }
+          },
+          maxWidth: '100%',
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+          py: 0.5,
         }}
       >
         <Link 
           href="/"
+          passHref
           onClick={handleNavigation}
           style={{ textDecoration: 'none' }}
         >
@@ -45,22 +76,38 @@ const Breadcrumb = ({ currentPage }: BreadcrumbProps) => {
             sx={{
               display: 'flex',
               alignItems: 'center',
-              color: '#757574',
+              color: "#f0f5f1",
               textDecoration: 'none',
+              fontSize: '1rem',
+              transition: 'color 0.2s ease',
               '&:hover': {
-                color: 'primary.main',
-                textDecoration: 'none',
+                color: '#0791f0',
+              },
+              '& svg': {
+                fontSize: '1.15rem',
+                mr: 0.5,
+                color:"#f0f5f1"
               }
             }}
           >
-            <HomeIcon sx={{ mr: 0.5 }} fontSize="small" />
+            <HomeIcon />
             Home
           </Box>
         </Link>
-        <Typography color="primary" fontWeight={500}>
+        <Typography 
+          color="#0791f0" 
+          sx={{ 
+            fontSize: '1rem',
+            fontWeight: 500,
+            whiteSpace: 'nowrap',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+          }}
+        >
           {currentPage}
         </Typography>
       </MuiBreadcrumbs>
+      
       {isNavigating && (
         <Box sx={{ 
           position: 'fixed', 
@@ -72,7 +119,7 @@ const Breadcrumb = ({ currentPage }: BreadcrumbProps) => {
           zIndex: 9999,
           display: 'flex',
           justifyContent: 'center',
-          alignItems: 'center'
+          alignItems: 'center',
         }}>
           <Box sx={{ 
             width: 60, 

@@ -18,10 +18,8 @@ export default function ClientLayout({
 }) {
   const [isLoading, setIsLoading] = useState(true);
   const pathname = usePathname();
-  const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
-    setIsMounted(true);
     const handleStart = () => setIsLoading(true);
     const handleComplete = () => {
       // Small delay to prevent flash of content
@@ -36,25 +34,21 @@ export default function ClientLayout({
     };
   }, [pathname]);
 
-  // Only apply opacity transition after component mounts on client
-  const bodyStyle: React.CSSProperties = {
-    margin: 0,
-    padding: 0,
-    minHeight: '100vh',
-    width: '100%',
-    overflowX: 'hidden' as const,
-    opacity: isMounted ? (isLoading ? 0 : 1) : 1,
-    transition: isMounted ? 'opacity 0.3s ease-in-out' : 'none',
-    display: 'flex',
-    flexDirection: 'column',
-  };
-
   return (
     <html lang="en">
       <body 
         className={inter.className}
-        style={bodyStyle}
-        suppressHydrationWarning
+        style={{
+          margin: 0,
+          padding: 0,
+          minHeight: '100vh',
+          width: '100%',
+          overflowX: 'hidden',
+          opacity: isLoading ? 0 : 1,
+          transition: 'opacity 0.3s ease-in-out',
+          display: 'flex',
+          flexDirection: 'column'
+        }}
       >
         {isLoading && <GlobalLoading />}
         <Navbar />

@@ -27,12 +27,6 @@ const CompatibleModal = forwardRef<HTMLDivElement, ModalProps>(({ children, ...p
   const setRefs = useCallback((node: HTMLDivElement | null) => {
     // Update the local ref
     containerRef.current = node;
-    // Handle the forwarded ref
-    if (typeof ref === 'function') {
-      ref(node);
-    } else if (ref) {
-      ref.current = node;
-    }
     
     // Forward the ref
     if (ref) {
@@ -49,6 +43,7 @@ const CompatibleModal = forwardRef<HTMLDivElement, ModalProps>(({ children, ...p
       {...props} 
       slotProps={{
         root: {
+          // @ts-ignore - Workaround for React 19 ref handling
           ref: setRefs
         }
       }}
@@ -137,29 +132,17 @@ export default function VideoGallery() {
     setSelectedVideo(video);
     setIsModalOpen(true);
     // Use a small timeout to ensure the video element is mounted
-    const playVideo = () => {
-      const videoElement = videoRef.current;
-      if (videoElement) {
-        videoElement.muted = true; // Mute for autoplay
-        const playPromise = videoElement.play();
-        
-        if (playPromise !== undefined) {
-          playPromise
-            .then(() => {
-              setIsPlaying(true);
-            })
-            .catch(err => {
-              console.error('Autoplay failed:', err);
-              setIsPlaying(false);
-            });
-        }
+    setTimeout(() => {
+      if (videoRef.current) {
+        videoRef.current.muted = true; // Mute for autoplay
+        videoRef.current.play().then(() => {
+          setIsPlaying(true);
+        }).catch(err => {
+          console.error('Autoplay failed:', err);
+          setIsPlaying(false);
+        });
       }
-    };
-    
-    // Use requestAnimationFrame for better timing
-    requestAnimationFrame(() => {
-      requestAnimationFrame(playVideo);
-    });
+    }, 100);
   };
 
   // Handle close modal
@@ -245,91 +228,51 @@ export default function VideoGallery() {
     }
   };
 
-  // Toggle fullscreen with cross-browser and mobile support
+  // Toggle fullscreen with cross-browser support
   const toggleFullscreen = (e?: React.MouseEvent) => {
     e?.stopPropagation();
     
-    // Define the fullscreen API types
-    interface DocumentWithFullscreen extends Document {
-      webkitFullscreenElement?: Element | null;
-      mozFullScreenElement?: Element | null;
-      msFullscreenElement?: Element | null;
-      webkitExitFullscreen?: () => Promise<void>;
-      mozCancelFullScreen?: () => Promise<void>;
-      msExitFullscreen?: () => Promise<void>;
-    }
-    
-    const doc = document as DocumentWithFullscreen;
-    
-    const element = 
-      document.fullscreenElement || 
-      doc.webkitFullscreenElement ||
-      doc.mozFullScreenElement ||
-      doc.msFullscreenElement;
-    
-    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    const element = document.fullscreenElement || 
+                   (document as any).webkitFullscreenElement ||
+                   (document as any).mozFullScreenElement ||
+                   (document as any).msFullscreenElement;
     
     if (!element) {
       // Enter fullscreen
-      if (isMobile && videoRef.current) {
-        // Mobile-specific fullscreen handling
-        const video = videoRef.current as HTMLVideoElement & {
-          webkitEnterFullscreen?: () => void;
-          webkitExitFullscreen?: () => void;
-        };
+      const videoContainer = videoRef.current?.parentElement?.parentElement; // Get the modal content
+      if (videoContainer) {
+        const requestFullscreen = 
+          videoContainer.requestFullscreen ||
+          (videoContainer as any).webkitRequestFullscreen ||
+          (videoContainer as any).mozRequestFullScreen ||
+          (videoContainer as any).msRequestFullscreen;
         
-        if (video.requestFullscreen) {
-          video.requestFullscreen().catch(err => {
-            console.error('Error entering fullscreen on mobile:', err);
-            // iOS specific fallback
-            if (video.webkitEnterFullscreen) {
-              video.webkitEnterFullscreen();
-            }
-          });
-        } else if (video.webkitEnterFullscreen) {
-          video.webkitEnterFullscreen();
-        }
-      } else {
-        // Desktop fullscreen handling
-        const videoContainer = videoRef.current?.parentElement?.parentElement as HTMLElement & {
-          webkitRequestFullscreen?: () => Promise<void>;
-          mozRequestFullScreen?: () => Promise<void>;
-          msRequestFullscreen?: () => Promise<void>;
-        } | null;
-        
-        if (videoContainer) {
-          const requestFullscreen = 
-            videoContainer.requestFullscreen ||
-            videoContainer.webkitRequestFullscreen ||
-            videoContainer.mozRequestFullScreen ||
-            videoContainer.msRequestFullscreen;
-          
-          if (requestFullscreen) {
-            requestFullscreen.call(videoContainer).catch(console.error);
+        if (requestFullscreen) {
+          const promise = requestFullscreen.call(videoContainer);
+          if (promise && promise.catch) {
+            promise.catch((err: Error) => {
+              console.error('Error attempting to enable fullscreen:', err);
+              // Fallback for iOS
+              if (videoRef.current && 'webkitEnterFullscreen' in videoRef.current) {
+                (videoRef.current as any).webkitEnterFullscreen();
+              }
+            });
           }
+          setIsFullscreen(true);
         }
       }
-      setIsFullscreen(true);
     } else {
       // Exit fullscreen
       const exitFullscreen = 
         document.exitFullscreen ||
-        doc.webkitExitFullscreen ||
-        doc.mozCancelFullScreen ||
-        doc.msExitFullscreen;
+        (document as any).webkitExitFullscreen ||
+        (document as any).mozCancelFullScreen ||
+        (document as any).msExitFullscreen;
       
       if (exitFullscreen) {
-        exitFullscreen.call(document).catch(console.error);
-      }
-      
-      // Special handling for iOS
-      if (isMobile && videoRef.current) {
-        const video = videoRef.current as HTMLVideoElement & {
-          webkitExitFullscreen?: () => void;
-        };
-        if (video.webkitExitFullscreen) {
-          video.webkitExitFullscreen();
-        }
+        exitFullscreen.call(document).catch((err: Error) => {
+          console.error('Error attempting to exit fullscreen:', err);
+        });
       }
       
       setIsFullscreen(false);
