@@ -6,23 +6,19 @@ import {
   Typography, 
   Container, 
   Grid, 
-  Card,
   CardContent, 
   Button, 
   Divider, 
-  Chip,
   Tabs,
   Tab,
   useTheme,
   useMediaQuery
 } from '@mui/material';
 import StarIcon from '@mui/icons-material/Star';
-import Image from 'next/image';
 import Breadcrumb from '@/components/common/Breadcrumb';
-import { lessons, type LessonCategory } from './lessonsData';
+import { lessons } from './lessonsData';
 import { 
   StyledCard, 
-  StyledCardMedia, 
   PopularBadge, 
   Price, 
   OriginalPrice, 
@@ -270,113 +266,77 @@ const Lessons: React.FC = () => {
             <Grid container spacing={3}>
               {category.types.map((lesson) => (
                 <Grid item xs={12} sm={6} md={4} key={lesson.id}>
-                  <StyledCard elevation={3}>
+                  <StyledCard 
+                    elevation={3}
+                    style={{
+                      backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.7)), url(${category.imageSrc})`,
+                      backgroundSize: 'cover',
+                      backgroundPosition: 'center',
+                    }}
+                  >
                     {lesson.isPopular && (
-                      <PopularBadge
-                        icon={<StarIcon />}
-                        label="Most Popular"
-                      />
+                      <PopularBadge>
+                        <StarIcon fontSize="small" />
+                        Most Popular
+                      </PopularBadge>
                     )}
-                    <StyledCardMedia>
-                      <Image
-                        src={category.imageSrc}
-                        alt={category.imageAlt}
-                        fill
-                        style={{ objectFit: 'cover' }}
-                        sizes="(max-width: 600px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                      />
-                    </StyledCardMedia>
                     <CardContent sx={{ 
-                      flexGrow: 1, 
+                      position: 'relative',
+                      zIndex: 2,
+                      height: '100%',
                       display: 'flex', 
                       flexDirection: 'column',
                       padding: '24px',
-                      '&:last-child': { paddingBottom: '24px' }
+                      '&:last-child': { 
+                        paddingBottom: '24px' 
+                      },
                     }}>
+                      {/* Title */}
                       <Typography 
                         variant="h6" 
                         component="h3" 
                         sx={{
                           fontSize: '1.4rem',
                           fontWeight: 700,
-                          color: '#2c3e50',
-                          mb: 1.5,
+                          color: '#ffffff',
+                          mb: 2,
                           lineHeight: 1.3,
                           fontFamily: '"Poppins", sans-serif',
                         }}
                       >
                         {lesson.title}
                       </Typography>
-                      <Typography 
-                        variant="body2" 
-                        sx={{
-                          color: '#64748b',
-                          mb: 2.5,
-                          fontSize: '0.95rem',
-                          lineHeight: 1.6,
-                        }}
-                      >
-                        {lesson.description}
-                      </Typography>
                       
-                      <Box sx={{ 
-                        display: 'flex', 
-                        alignItems: 'flex-end', 
-                        mb: 2,
-                        flexWrap: 'wrap',
-                        gap: 1,
-                      }}>
-                        <Price>{lesson.price}</Price>
-                        {lesson.originalPrice && (
-                          <OriginalPrice>
-                            {lesson.originalPrice}
-                          </OriginalPrice>
-                        )}
-                        {lesson.discount && (
-                          <Chip
-                            label={lesson.discount}
-                            sx={{ 
-                              backgroundColor: 'rgba(25, 118, 210, 0.1)',
-                              color: '#1976d2',
-                              height: '24px',
-                              fontSize: '0.75rem',
-                              fontWeight: 600,
-                              ml: 1,
-                            }}
-                          />
-                        )}
+                      {/* Price Row */}
+                      <Box sx={{ mb: 2 }}>
+                        <Price>
+                          <Box className="price-container">
+                            <span className="main-price">{lesson.price}</span>
+                            <span className="per-person">/person</span>
+                            {lesson.originalPrice && (
+                              <OriginalPrice>{lesson.originalPrice}</OriginalPrice>
+                            )}
+                          </Box>
+                        </Price>
                       </Box>
                       
-                      <Typography 
-                        variant="body2" 
-                        sx={{
-                          color: '#64748b',
-                          fontSize: '0.9rem',
-                          mb: 2.5,
-                          display: 'flex',
-                          alignItems: 'center',
-                          '&:before': {
-                            content: '"⏱️"',
-                            mr: 1,
-                            fontSize: '1rem',
-                          }
-                        }}
-                      >
-                        {lesson.duration}
-                      </Typography>
+                      {/* Duration */}
+                      <Box sx={{ display: 'flex', alignItems: 'center', mb: 3, color: 'rgba(255, 255, 255, 0.9)' }}>
+                        <span style={{ marginRight: '8px' }}>⏱️</span>
+                        <span style={{ fontSize: '0.95rem' }}>{lesson.duration}</span>
+                      </Box>
                       
-                      <Divider sx={{ my: 2, borderColor: 'rgba(0, 0, 0, 0.04)' }} />
+                      <Divider sx={{ my: 2, borderColor: 'rgba(255, 255, 255, 0.2)' }} />
                       
                       <Typography 
                         variant="subtitle2" 
                         sx={{ 
                           fontWeight: 700,
-                          color: '#2c3e50',
-                          mb: 1.5,
+                          color: 'rgba(255, 255, 255, 0.9)',
+                          mb: 1,
                           fontSize: '0.9rem',
-                          letterSpacing: '0.5px',
+                          letterSpacing: '0.3px',
                           textTransform: 'uppercase',
-                          opacity: 0.8,
                         }}
                       >
                         What's included:

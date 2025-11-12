@@ -1,7 +1,6 @@
 export interface LessonType {
   id: string;
   title: string;
-  description: string;
   price: string;
   duration: string;
   features: string[];
@@ -29,12 +28,11 @@ export const skiLessons: LessonCategory = {
     {
       id: 'ski-single',
       title: 'Single Lesson',
-      price: '$99',
-      duration: '2 hours',
-      description: 'Perfect for trying out or focusing on specific skills',
+      price: '֏20.000',
+      duration: '1 hour',
       features: [
         'Personalized instruction',
-        '2 hours of training',
+        '1 hour of training',
         'All skill levels',
         'Flexible scheduling'
       ]
@@ -42,40 +40,37 @@ export const skiLessons: LessonCategory = {
     {
       id: 'ski-starter',
       title: 'Starter Pack',
-      price: '$270',
-      duration: '3 x 2 hours',
-      description: 'Great way to build your skills progressively',
+      price: '֏18.000',
+      duration: '2-3 hours',
       features: [
-        '3 private lessons',
+        '2-3 hours of private lessons',
         'Save 10% vs single lessons',
         'Personalized progress tracking',
         'Priority booking'
       ],
-      originalPrice: '$297',
+      originalPrice: '֏20.000',
       discount: 'Save 10%',
       isPopular: true
     },
     {
       id: 'ski-extended',
       title: 'Extended Learning',
-      price: '$400',
-      duration: '5 x 2 hours',
-      description: 'Best value for comprehensive learning',
+      price: '֏16.000',
+      duration: '4-6 hours',
       features: [
-        '5 private lessons',
+        '4-6 hours of private lessons',
         'Save 20% vs single lessons',
         'Video analysis included',
         'Flexible scheduling'
       ],
-      originalPrice: '$495',
+      originalPrice: '֏20.000',
       discount: 'Save 20%'
     },
     {
       id: 'ski-fullday',
       title: 'Full Day Plan',
-      price: '$350',
-      duration: '6 hours',
-      description: 'Ideal for intensive training',
+      price: '֏120.000',
+      duration: '8 hours',
       features: [
         'Full day instruction',
         'Lunch with instructor',
@@ -86,9 +81,8 @@ export const skiLessons: LessonCategory = {
     {
       id: 'ski-vip',
       title: 'VIP Package',
-      price: '$600',
+      price: '֏180.000',
       duration: '8 hours',
-      description: 'Ultimate personalized experience',
       features: [
         'Full day private instruction',
         'Priority lift access',
@@ -112,7 +106,6 @@ export const snowboardLessons: LessonCategory = {
       title: 'Single Lesson',
       price: '$99',
       duration: '2 hours',
-      description: 'Perfect for trying out or focusing on specific skills',
       features: [
         'Personalized instruction',
         '2 hours of training',
@@ -125,7 +118,6 @@ export const snowboardLessons: LessonCategory = {
       title: 'Starter Pack',
       price: '$270',
       duration: '3 x 2 hours',
-      description: 'Great way to build your skills progressively',
       features: [
         '3 private lessons',
         'Save 10% vs single lessons',
@@ -141,7 +133,6 @@ export const snowboardLessons: LessonCategory = {
       title: 'Extended Learning',
       price: '$400',
       duration: '5 x 2 hours',
-      description: 'Best value for comprehensive learning',
       features: [
         '5 private lessons',
         'Save 20% vs single lessons',
@@ -156,7 +147,6 @@ export const snowboardLessons: LessonCategory = {
       title: 'Full Day Plan',
       price: '$350',
       duration: '6 hours',
-      description: 'Ideal for intensive training',
       features: [
         'Full day instruction',
         'Lunch with instructor',
@@ -169,7 +159,6 @@ export const snowboardLessons: LessonCategory = {
       title: 'VIP Package',
       price: '$600',
       duration: '8 hours',
-      description: 'Ultimate personalized experience',
       features: [
         'Full day private instruction',
         'Priority lift access',
