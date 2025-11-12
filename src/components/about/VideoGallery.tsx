@@ -136,6 +136,10 @@ export default function VideoGallery() {
       if (videoRef.current) {
         videoRef.current.muted = true; // Mute for autoplay
         videoRef.current.play().then(() => {
+          // Unmute after video starts playing
+          if (videoRef.current) {
+            videoRef.current.muted = false;
+          }
           setIsPlaying(true);
         }).catch(err => {
           console.error('Autoplay failed:', err);
@@ -591,9 +595,16 @@ export default function VideoGallery() {
                     onTimeUpdate={handleTimeUpdate}
                     onLoadedMetadata={handleLoadedMetadata}
                     onEnded={() => setIsPlaying(false)}
-                    onPlay={() => setIsPlaying(true)}
+                    onPlay={() => {
+                      setIsPlaying(true);
+                      // Ensure video is not muted when playing
+                      if (videoRef.current) {
+                        videoRef.current.muted = false;
+                      }
+                    }}
                     onPause={() => setIsPlaying(false)}
                     onError={handleVideoError}
+                    preload="metadata"
                     style={{
                       maxWidth: '100%',
                       maxHeight: '100%',
@@ -603,8 +614,6 @@ export default function VideoGallery() {
                     tabIndex={0}
                     onKeyDown={handleKeyDown}
                     aria-label={`Video player: ${selectedVideo.title}`}
-                    playsInline
-                    preload="metadata"
                   />
                 </Box>
 

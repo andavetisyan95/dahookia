@@ -312,7 +312,12 @@ const Lessons: React.FC = () => {
                         <Price>
                           <Box className="price-container">
                             <span className="main-price">{lesson.price}</span>
-                            <span className="per-person">/person</span>
+                            <span className="per-person">
+                              {lesson.id.includes('single') ? '/hour' : 
+                               lesson.id.includes('starter') ? '/per hour' :
+                               lesson.id.includes('extended') ? '/per hour' :
+                               ''}
+                            </span>
                             {lesson.originalPrice && (
                               <OriginalPrice>{lesson.originalPrice}</OriginalPrice>
                             )}

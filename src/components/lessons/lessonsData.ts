@@ -104,11 +104,11 @@ export const snowboardLessons: LessonCategory = {
     {
       id: 'snow-single',
       title: 'Single Lesson',
-      price: '$99',
-      duration: '2 hours',
+      price: '֏25.000',
+      duration: '1 hour',
       features: [
         'Personalized instruction',
-        '2 hours of training',
+        '1 hour of training',
         'All skill levels',
         'Flexible scheduling'
       ]
@@ -116,37 +116,37 @@ export const snowboardLessons: LessonCategory = {
     {
       id: 'snow-starter',
       title: 'Starter Pack',
-      price: '$270',
-      duration: '3 x 2 hours',
+      price: '֏23.000',
+      duration: '2-3 hours',
       features: [
-        '3 private lessons',
-        'Save 10% vs single lessons',
+        '2-3 hours of private lessons',
+        'Save 8% vs single lessons',
         'Personalized progress tracking',
         'Priority booking'
       ],
-      originalPrice: '$297',
-      discount: 'Save 10%',
+      originalPrice: '֏25.000',
+      discount: 'Save 8%',
       isPopular: true
     },
     {
       id: 'snow-extended',
       title: 'Extended Learning',
-      price: '$400',
-      duration: '5 x 2 hours',
+      price: '֏20.000',
+      duration: '4-6 hours',
       features: [
-        '5 private lessons',
+        '4-6 hours of private lessons',
         'Save 20% vs single lessons',
         'Video analysis included',
         'Flexible scheduling'
       ],
-      originalPrice: '$495',
+      originalPrice: '֏25.000',
       discount: 'Save 20%'
     },
     {
       id: 'snow-fullday',
       title: 'Full Day Plan',
-      price: '$350',
-      duration: '6 hours',
+      price: '֏150.000',
+      duration: '8 hours',
       features: [
         'Full day instruction',
         'Lunch with instructor',
@@ -157,7 +157,7 @@ export const snowboardLessons: LessonCategory = {
     {
       id: 'snow-vip',
       title: 'VIP Package',
-      price: '$600',
+      price: '֏220.000',
       duration: '8 hours',
       features: [
         'Full day private instruction',
