@@ -15,9 +15,11 @@ import LocationOn from '@mui/icons-material/LocationOn';
 import Link from 'next/link';
 import Image from 'next/image';
 import { pages } from '@/source/navLinks';
+import { useNavigation } from '@/contexts/NavigationContext';
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
+  const { handleNavigation } = useNavigation();
 
   return (
     <Box
@@ -150,22 +152,25 @@ const Footer = () => {
             }}>
               <Typography variant="h6" sx={{ fontWeight: 600, mb: 1 }}>Quick Links</Typography>
               {pages.map((page) => (
-                <MuiLink 
+                <Box
                   key={`${page.name}_${page.href}`}
-                  component={Link} 
-                  href={page.href} 
-                  color="inherit" 
-                  underline="none" 
+                  component="a"
+                  href={page.href}
+                  onClick={(e) => handleNavigation(e, page.href)}
                   sx={{ 
+                    color: 'inherit',
+                    textDecoration: 'none',
+                    cursor: 'pointer',
+                    display: 'block',
+                    py: 0.5,
                     '&:hover': { 
                       color: '#42a5f5',
                     },
                     transition: 'color 0.3s ease',
-                    py: 0.5
                   }}
                 >
                   {page.name}
-                </MuiLink>
+                </Box>
               ))}
             </Box>
           </FooterColumn>

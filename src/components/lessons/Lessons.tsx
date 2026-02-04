@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { 
   Box, 
   Typography, 
@@ -62,7 +62,12 @@ const Lessons: React.FC = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const [tabValue, setTabValue] = useState(0);
-  
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
     setTabValue(newValue);
   };
@@ -180,53 +185,71 @@ const Lessons: React.FC = () => {
       </Box>
 
       <Container maxWidth="lg" sx={{ py: 8 }}>
-        {/* Tabs */}
-        <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 4 }}>
-          <Tabs 
-            value={tabValue} 
-            onChange={handleTabChange} 
-            aria-label="lesson categories"
-            variant={isMobile ? 'scrollable' : 'standard'}
-            scrollButtons="auto"
-            sx={{
-              '& .MuiTabs-indicator': {
-                backgroundColor: '#1976d2',
+        {/* Tabs - Using a more reliable approach */}
+        <Box sx={{ mb: 4 }}>
+          <Box 
+            sx={{ 
+              display: 'flex',
+              borderBottom: 1, 
+              borderColor: 'divider',
+              minHeight: '48px',
+              alignItems: 'center',
+              position: 'relative',
+              '&::after': {
+                content: '""',
+                position: 'absolute',
+                bottom: 0,
+                left: 0,
+                right: 0,
                 height: '3px',
-              },
-              '& .MuiTab-root': {
-                textTransform: 'none',
-                fontWeight: 600,
-                fontSize: '1.1rem',
-                color: '#64748b',
-                '&.Mui-selected': {
-                  color: '#1976d2',
-                },
-              },
+                backgroundColor: '#1976d2',
+                transform: `translateX(${tabValue * 100}%)`,
+                transition: 'transform 0.3s ease',
+                width: '50%',
+              }
             }}
           >
-            <Tab 
-              label="Ski Lessons"
-              {...a11yProps(0)} 
-              sx={{ 
-                minWidth: isMobile ? 'auto' : 140, 
-                px: { xs: 2, sm: 3 },
+            <Box 
+              onClick={() => handleTabChange({} as React.SyntheticEvent, 0)}
+              sx={{
+                flex: 1,
+                textAlign: 'center',
+                py: 2,
+                px: 3,
+                cursor: 'pointer',
+                color: tabValue === 0 ? '#1976d2' : '#64748b',
                 fontWeight: 600,
-                fontSize: '1rem',
+                fontSize: '1.1rem',
+                transition: 'color 0.2s ease',
+                '&:hover': {
+                  color: '#1976d2',
+                },
               }}
-            />
-            <Tab 
-              label="Snowboard Lessons"
-              {...a11yProps(1)} 
-              sx={{ 
-                minWidth: isMobile ? 'auto' : 180, 
-                px: { xs: 2, sm: 3 },
+            >
+              Ski Lessons
+            </Box>
+            <Box 
+              onClick={() => handleTabChange({} as React.SyntheticEvent, 1)}
+              sx={{
+                flex: 1,
+                textAlign: 'center',
+                py: 2,
+                px: 3,
+                cursor: 'pointer',
+                color: tabValue === 1 ? '#1976d2' : '#64748b',
                 fontWeight: 600,
-                fontSize: '1rem',
+                fontSize: '1.1rem',
+                transition: 'color 0.2s ease',
+                '&:hover': {
+                  color: '#1976d2',
+                },
               }}
-            />
-          </Tabs>
+            >
+              Snowboard Lessons
+            </Box>
+          </Box>
         </Box>
-
+        
         {/* Tab Panels */}
         {lessons.map((category, index) => (
           <TabPanel key={category.id} value={tabValue} index={index}>

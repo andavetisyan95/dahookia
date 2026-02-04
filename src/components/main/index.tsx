@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import {
   AppBar,
   Toolbar,
@@ -11,11 +11,14 @@ import Link from "next/link";
 import DownhillSkiingIcon from "@mui/icons-material/DownhillSkiing";
 import DrawerMenu from "./header/drawer-menu";
 import { pages } from "../../source/navLinks";
+import GlobalLoading from "../common/GlobalLoading";
+import { useNavigation } from "../../contexts/NavigationContext";
 
 export default function Navbar() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
+  const { isNavigating, handleNavigation } = useNavigation();
 
   // Set isMounted to true after component mounts (client-side only)
   useEffect(() => {
@@ -39,11 +42,29 @@ export default function Navbar() {
     // Initial check
     handleScroll();
     
+    // Cleanup event listeners on component unmount
     return () => {
       window.removeEventListener("scroll", handleScroll);
       window.removeEventListener("resize", handleResize);
     };
   }, []);
+  
+  // Close drawer when clicking outside
+  useEffect(() => {
+    if (!drawerOpen) return;
+    
+    const handleClickOutside = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      const drawer = document.querySelector('.MuiDrawer-root');
+      
+      if (drawer && !drawer.contains(target)) {
+        setDrawerOpen(false);
+      }
+    };
+    
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [drawerOpen]);
 
   // Don't render anything during SSR to prevent hydration mismatch
   if (!isMounted) {
@@ -131,14 +152,16 @@ export default function Navbar() {
           {pages.map((page) => (
             <Button
               key={page.href}
-              component={Link}
               href={page.href}
+              onClick={(e) => handleNavigation(e, page.href)}
               sx={{
-                color: 'inherit',
+                color: 'white',
                 fontWeight: 500,
+                fontSize: '1rem',
+                textTransform: 'none',
                 '&:hover': {
-                  color: 'transparent',
-                  opacity: 0.8,
+                  opacity: 0.9,
+                  backgroundColor: 'rgba(255, 255, 255, 0.1)',
                 },
               }}
             >
@@ -175,6 +198,31 @@ export default function Navbar() {
         openDrawer={drawerOpen}
         closeDrawer={() => setDrawerOpen(false)}
       />
+      
+      {/* Global Loading Overlay */}
+      {isNavigating && (
+        <Box
+          sx={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 9999,
+            pointerEvents: 'auto',
+          }}
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+          }}
+        >
+          <GlobalLoading />
+        </Box>
+      )}
     </AppBar>
   );
 }

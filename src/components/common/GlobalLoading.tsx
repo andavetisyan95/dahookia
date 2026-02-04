@@ -1,8 +1,7 @@
 'use client';
 
+import { Box, keyframes } from '@mui/system';
 import { useEffect, useState } from 'react';
-import Box from '@mui/material/Box';
-import { keyframes } from '@mui/system';
 
 // Animation keyframes
 const pulse = keyframes`
@@ -46,7 +45,7 @@ const GlobalLoading = () => {
         left: 0,
         width: '100%',
         height: '100%',
-        backgroundColor: 'background.paper',
+        backgroundColor: 'white',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
@@ -55,20 +54,9 @@ const GlobalLoading = () => {
         transition: 'opacity 0.5s ease-out',
         opacity: isLoading ? 1 : 0,
         pointerEvents: isLoading ? 'auto' : 'none',
-        '&::before': {
-          content: '""',
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          background: 'linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(240,240,240,0.9) 100%)',
-          zIndex: -1,
-        }
       }}
     >
       <Box
-        component="div"
         sx={{
           position: 'relative',
           width: 120,
@@ -110,28 +98,6 @@ const GlobalLoading = () => {
             filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.1))',
           }}
         />
-      </Box>
-      <Box
-        sx={{
-          mt: 2,
-          color: 'text.primary',
-          fontSize: '1.1rem',
-          fontWeight: 500,
-          letterSpacing: '0.1em',
-          textTransform: 'uppercase',
-          background: 'linear-gradient(90deg, #1976d2, #4caf50)',  // Blue to green gradient
-          WebkitBackgroundClip: 'text',
-          WebkitTextFillColor: 'transparent',
-          backgroundSize: '200% auto',
-          animation: 'gradient 3s ease infinite',
-          '@keyframes gradient': {
-            '0%': { backgroundPosition: '0% 50%' },
-            '50%': { backgroundPosition: '100% 50%' },
-            '100%': { backgroundPosition: '0% 50%' },
-          },
-        }}
-      >
-        Loading Your Adventure
       </Box>
     </Box>
   );

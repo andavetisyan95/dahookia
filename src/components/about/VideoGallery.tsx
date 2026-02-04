@@ -21,19 +21,18 @@ import { VideoThumbnail, PlayButton, ModalContent } from '@/styledComponents/abo
 // Simple wrapper for Modal that's compatible with React 19
 const CompatibleModal = forwardRef<HTMLDivElement, ModalProps>(({ children, ...props }, ref) => {
   // Create a container ref
-  const containerRef = useRef<HTMLDivElement>(null);
+  const modalRef = useRef<HTMLDivElement>(null);
   
   // Combine refs using a callback
-  const setRefs = useCallback((node: HTMLDivElement | null) => {
-    // Update the local ref
-    containerRef.current = node;
-    
-    // Forward the ref
-    if (ref) {
-      if (typeof ref === 'function') {
-        ref(node);
-      } else {
-        ref.current = node;
+  const handleRef = useCallback((node: HTMLDivElement | null) => {
+    if (node) {
+      modalRef.current = node;
+      if (ref) {
+        if (typeof ref === 'function') {
+          ref(node);
+        } else if (ref) {
+          ref.current = node;
+        }
       }
     }
   }, [ref]);
@@ -41,10 +40,11 @@ const CompatibleModal = forwardRef<HTMLDivElement, ModalProps>(({ children, ...p
   return (
     <Modal 
       {...props} 
+      ref={handleRef}
       slotProps={{
         root: {
           // @ts-ignore - Workaround for React 19 ref handling
-          ref: setRefs
+          component: 'div'
         }
       }}
     >

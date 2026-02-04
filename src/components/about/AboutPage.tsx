@@ -178,6 +178,8 @@ export default function AboutPage() {
             mt: { xs: 6, md: 10 },
             p: { xs: 4, md: 6 },
             borderRadius: 3,
+            maxWidth: '700px',
+            mx: 'auto',
             background: 'linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%)',
             boxShadow: '0 10px 30px rgba(0,0,0,0.05)',
             border: '1px solid rgba(0,0,0,0.03)',

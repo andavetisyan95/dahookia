@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import ClientLayout from './ClientLayout';
+import { NavigationProvider } from '../contexts/NavigationContext';
 
 export const metadata: Metadata = {
   title: 'Dahookia',
@@ -12,8 +13,10 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <ClientLayout>
-      {children}
-    </ClientLayout>
+    <NavigationProvider>
+      <ClientLayout>
+        {children}
+      </ClientLayout>
+    </NavigationProvider>
   );
 }

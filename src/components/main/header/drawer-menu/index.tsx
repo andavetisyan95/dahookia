@@ -6,6 +6,7 @@ import SocialIcons from '../social-icons';
 import { pages } from '../../../../source/navLinks';
 import Image from 'next/image';
 import { styled } from '@mui/material/styles';
+import { useNavigation } from '../../../../contexts/NavigationContext';
 
 // Custom Drawer component with optimized transitions
 const CustomDrawer = styled(Box, { shouldForwardProp: (prop) => prop !== 'open' })(
@@ -52,6 +53,7 @@ function DrawerMenu({ openDrawer, closeDrawer }: DrawerMenuProps) {
   const [mounted, setMounted] = useState(false);
   const isFirstRender = useRef(true);
   const drawerRef = useRef<HTMLDivElement>(null);
+  const { handleNavigation } = useNavigation();
 
   // Only render on client-side after mount
   useEffect(() => {
@@ -169,10 +171,14 @@ function DrawerMenu({ openDrawer, closeDrawer }: DrawerMenuProps) {
             }}
           >
             {pages.map(({ name, href }) => (
-              <Link 
-                href={href} 
+              <Box 
                 key={name}
-                onClick={closeDrawer}
+                component="a"
+                href={href}
+                onClick={(e) => {
+                  handleNavigation(e, href);
+                  closeDrawer();
+                }}
                 style={{ textDecoration: 'none', position: 'relative' }}
               >
                 <Typography
@@ -182,6 +188,7 @@ function DrawerMenu({ openDrawer, closeDrawer }: DrawerMenuProps) {
                     fontWeight: 500,
                     py: 1.5,
                     px: 2,
+                    cursor: 'pointer',
                     '&:hover': {
                       color: '#1976d2',
                     },
@@ -190,7 +197,7 @@ function DrawerMenu({ openDrawer, closeDrawer }: DrawerMenuProps) {
                 >
                   {name}
                 </Typography>
-              </Link>
+              </Box>
             ))}
           </Stack>
 
